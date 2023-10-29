@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  django_gunicorn:
+    volumes:
+      - static:/app/static
+    env_file:
+      - .env
+    build:
+      context: .
+    command: bash -c "python manage.py migrate --no-input && python manage.py collectstatic --no-input && gunicorn _base.wsgi:application --bind 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks:
+      - app
+    restart: unless-stopped
+
+  postgres:
+    env_file:
+      - .env
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: localhost
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - app
+    restart: unless-stopped
+
+
+volumes:
+  static:
+
+networks:
+  app:
