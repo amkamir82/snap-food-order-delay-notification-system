@@ -28,8 +28,10 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+        app_label = 'core'
 
     def delete(self, using=None, keep_parents=False):
         self.is_deleted = True
         self.is_archived = True
         self.save()
+

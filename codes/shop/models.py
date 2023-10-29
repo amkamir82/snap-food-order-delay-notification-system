@@ -25,15 +25,24 @@ class Order(BaseModel):
         self.delivery_time = self.delivery_duration + start
         return super(Order, self).save(force_insert, force_update, using, update_fields)
 
+    class Meta:
+        app_label = 'shop'
+
 
 class Agent(BaseModel):
     name = models.CharField(max_length=16)
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name="agent", null=True)
 
+    class Meta:
+        app_label = 'shop'
+
 
 class Trip(BaseModel):
     order = models.OneToOneField(to=Order, on_delete=models.DO_NOTHING, related_name="trip")
     status = models.CharField(max_length=16, choices=TRIP_STATUS_CHOICES, default=TripStatus.AT_VENDOR)
+
+    class Meta:
+        app_label = 'shop'
 
 
 class DelayReport(BaseModel):
@@ -42,7 +51,13 @@ class DelayReport(BaseModel):
     trip = models.ForeignKey(to=Trip, on_delete=models.CASCADE, related_name="delay_reports", null=True)
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='delay_reports')
 
+    class Meta:
+        app_label = 'shop'
+
 
 class DelayQueueItem(BaseModel):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name="queue_item", null=True)
+
+    class Meta:
+        app_label = 'shop'
 
